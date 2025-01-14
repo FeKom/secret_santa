@@ -1,0 +1,7 @@
+CREATE TABLE group (
+    id_group INT AUTO_INCREMENT,
+    name_group VARCHAR(255) NOT NULL,
+    preferences VARCHAR(500) NOT NULL,
+
+    primary key(id_group)
+);
