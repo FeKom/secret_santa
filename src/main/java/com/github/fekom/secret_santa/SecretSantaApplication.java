@@ -10,5 +10,5 @@ public class SecretSantaApplication {
 		SpringApplication.run(SecretSantaApplication.class, args);
 	}
 
-};
+}
 
