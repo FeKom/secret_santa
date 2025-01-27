@@ -27,7 +27,7 @@ public class GroupModel {
     private String preferences;
 
     @CreationTimestamp
-    private Instant ceationTimeStamp;
+    private Instant creationTimeStamp;
 
 
     public Long getGroupId() {
@@ -38,12 +38,12 @@ public class GroupModel {
         this.groupId = groupId;
     }
 
-    public Instant getCeationTimeStamp() {
-        return ceationTimeStamp;
+    public Instant getCreationTimeStamp() {
+        return creationTimeStamp;
     }
 
-    public void setCeationTimeStamp(Instant ceationTimeStamp) {
-        this.ceationTimeStamp = ceationTimeStamp;
+    public void setCreationTimeStamp(Instant ceationTimeStamp) {
+        this.creationTimeStamp = ceationTimeStamp;
     }
 
     public String getPreferences() {

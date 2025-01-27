@@ -1,11 +1,14 @@
 package com.github.fekom.secret_santa.model;
 
 
+import com.github.fekom.secret_santa.dtos.LoginRequest;
 import jakarta.persistence.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -13,12 +16,11 @@ public class UserModel implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
-    @Column(name = "user_id", columnDefinition = "UUID")
-    private String userId;
+    @Column(name = "user_id")
+    private UUID userId;
 
     private String name;
 
-    @Column(unique = true)
     private String email;
 
     private String password;
@@ -61,9 +63,9 @@ public class UserModel implements Serializable {
         this.name = name;
     }
 
-    public String getUserId() { return userId; }
+    public UUID getUserId() { return userId; }
 
-    public void setUserId(String userId) { this.userId = userId; }
+    public void setUserId(UUID userId) { this.userId = userId; }
 
     public List<Role> getRoles() { return roles; }
 
@@ -73,5 +75,8 @@ public class UserModel implements Serializable {
 
     public void setGroups(List<GroupModel> groups) { this.groups = groups; }
 
+    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(loginRequest.password(), this.password);
+    }
 
 }
