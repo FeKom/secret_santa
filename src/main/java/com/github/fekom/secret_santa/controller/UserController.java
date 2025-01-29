@@ -7,11 +7,8 @@ import com.github.fekom.secret_santa.model.UserModel;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
 import com.github.fekom.secret_santa.service.UserService;
-import jakarta.persistence.SecondaryTable;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.apache.catalina.User;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Set;
 
 import static java.util.List.*;
 
@@ -40,7 +36,7 @@ public class UserController {
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
 
-    @PostMapping("/register")
+    @PostMapping("/api/register")
     @Transactional
     public ResponseEntity<UserModel> newUser(@Valid @RequestBody CreateUserDTO dto) {
 

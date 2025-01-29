@@ -31,7 +31,7 @@ public class TokenController {
 
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<LoginResposne> login (@RequestBody LoginRequest loginRequest) {
         var user = userRepository.findByEmail(loginRequest.email());
 
