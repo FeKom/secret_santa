@@ -15,15 +15,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 @RestController
 public class TokenController {
 
 
     @Autowired
-     private  JwtEncoder jwtEncoder;
+    private  JwtEncoder jwtEncoder;
+
     @Autowired
-     private  UserRepository userRepository;
+    private  UserRepository userRepository;
+
     @Autowired
     private  BCryptPasswordEncoder passwordEncoder;
 
@@ -42,12 +45,17 @@ public class TokenController {
         var now = Instant.now();
         var expiresIn = 300L;
 
+        var scopes = user.get().getRoles()  
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.joining(""))
 
         var claims = JwtClaimsSet.builder()
                 .issuer("secret-santa")
                 .subject(user.get().getUserId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
+                .claim("scope", scopes)
                 .build();
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 

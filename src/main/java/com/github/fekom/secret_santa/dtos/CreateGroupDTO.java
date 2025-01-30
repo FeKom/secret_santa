@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public record CreateGroupDTO(
         @NotBlank String name,
-                             String Description,
-                             String preferences ) {
+                  String Description,
+                  String preferences ) {
 }
