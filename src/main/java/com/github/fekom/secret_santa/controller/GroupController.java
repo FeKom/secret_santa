@@ -4,7 +4,6 @@ import com.github.fekom.secret_santa.dtos.CreateGroupDTO;
 import com.github.fekom.secret_santa.dtos.ParticiapantDto;
 import com.github.fekom.secret_santa.model.GroupModel;
 import com.github.fekom.secret_santa.model.Role;
-import com.github.fekom.secret_santa.model.UserModel;
 import com.github.fekom.secret_santa.repository.GroupRepository;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,16 +35,15 @@ public class GroupController {
     UserRepository userRepository;
 
     @PostMapping("/api/group")
-    public ResponseEntity<Long> createGroup(@RequestBody CreateGroupDTO dto, JwtAuthenticationToken token) {
+    public ResponseEntity<Void> createGroup(@RequestBody CreateGroupDTO dto, JwtAuthenticationToken token) {
 
         var basicRole = roleRepository.findByRoleName(Role.Values.OWNER.name());
 
         var user = userRepository.findById(UUID.fromString(token.getName())).orElseThrow(() -> new RuntimeException("User not Found!"));
 
-
         var groupModel = new GroupModel();
-        groupModel.setUser(Collections.singletonList(user.get()));
-        groupModel.setRoles(of(basicRole));
+        groupModel.setUser(Collections.singletonList(user));
+        groupModel.setRoles(Collections.singletonList(basicRole));
         groupModel.setName(dto.name());
         groupModel.setDescription(dto.Description());
         groupModel.setPreferences(dto.preferences());
@@ -54,7 +51,7 @@ public class GroupController {
 
         groupRepository.save(groupModel);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(groupModel.getGroupId());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     
@@ -66,7 +63,7 @@ public class GroupController {
 
         var group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not Found"));
 
-        var participants = userRepository.findById(dto.userId).orElseThrow(() -> new RuntimeException("User not found!"));
+        var participants = userRepository.findById(dto.userId()).orElseThrow(() -> new RuntimeException("User not found!"));
 
         if (group.getUser().contains(participants)) {
             throw new RuntimeException("Participant is already in this group!");

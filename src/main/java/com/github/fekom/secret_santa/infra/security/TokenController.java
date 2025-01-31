@@ -2,6 +2,8 @@ package com.github.fekom.secret_santa.infra.security;
 
 import com.github.fekom.secret_santa.dtos.LoginRequest;
 import com.github.fekom.secret_santa.dtos.LoginResposne;
+import com.github.fekom.secret_santa.model.Role;
+import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @RestController
 public class TokenController {
 
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private  JwtEncoder jwtEncoder;
@@ -45,10 +49,10 @@ public class TokenController {
         var now = Instant.now();
         var expiresIn = 300L;
 
-        var scopes = user.get().getRoles()  
+        var scopes = user.get().getRoles()
                 .stream()
-                .map(Role::getName)
-                .collect(Collectors.joining(""))
+                .map(Role::getRoleName)
+                .collect(Collectors.joining(""));
 
         var claims = JwtClaimsSet.builder()
                 .issuer("secret-santa")
