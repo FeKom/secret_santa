@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -36,7 +37,7 @@ public class GroupController {
     UserRepository userRepository;
 
     @PostMapping("/api/group")
-    public ResponseEntity<Void> createGroup(@RequestBody CreateGroupDTO dto, JwtAuthenticationToken token) {
+    public ResponseEntity<Long> createGroup(@RequestBody CreateGroupDTO dto, JwtAuthenticationToken token) {
 
         var basicRole = roleRepository.findByRoleName(Role.Values.OWNER.name());
 
@@ -44,7 +45,8 @@ public class GroupController {
 
 
         var groupModel = new GroupModel();
-        groupModel.setUser(Collections.singletonList(user.get())).setRoles((of(basicRole)));
+        groupModel.setUser(Collections.singletonList(user.get()));
+        groupModel.setRoles(of(basicRole));
         groupModel.setName(dto.name());
         groupModel.setDescription(dto.Description());
         groupModel.setPreferences(dto.preferences());
@@ -52,7 +54,7 @@ public class GroupController {
 
         groupRepository.save(groupModel);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(groupModel.getGroupId());
     }
 
     
