@@ -47,7 +47,7 @@ public class TokenController {
         }
 
         var now = Instant.now();
-        var expiresIn = 300L;
+        var expiresIn = 10800L;
 
         var scopes = user.get().getRoles()
                 .stream()
@@ -63,6 +63,8 @@ public class TokenController {
                 .build();
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return ResponseEntity.ok(new LoginResposne(jwtValue, expiresIn));
+        LoginResposne response = new LoginResposne(jwtValue, expiresIn, user.get().getUserId());
+
+        return ResponseEntity.ok(response);
     }
 }

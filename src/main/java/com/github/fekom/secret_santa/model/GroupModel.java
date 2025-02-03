@@ -24,15 +24,6 @@ public class GroupModel {
     )
     private List<UserModel> user;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "tb_users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-
-    )
-    private List<Role> roles;
-
     private String name;
 
     private String description;
@@ -86,10 +77,6 @@ public class GroupModel {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public List<Role> getRoles() {return roles;}
-
-    public void setRoles(List<Role> roles) {this.roles = roles;}
 
 
 

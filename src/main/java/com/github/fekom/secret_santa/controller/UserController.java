@@ -1,6 +1,7 @@
 package com.github.fekom.secret_santa.controller;
 
 
+import com.github.fekom.secret_santa.ApiResponse.RegisterResponse;
 import com.github.fekom.secret_santa.dtos.CreateUserDTO;
 import com.github.fekom.secret_santa.model.Role;
 import com.github.fekom.secret_santa.model.UserModel;
@@ -19,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 import static java.util.List.*;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @RestController
 @RequestMapping()
@@ -38,7 +41,7 @@ public class UserController {
 
     @PostMapping("/api/register")
     @Transactional
-    public ResponseEntity<UserModel> newUser(@Valid @RequestBody CreateUserDTO dto) {
+    public ResponseEntity<RegisterResponse> newUser(@Valid @RequestBody CreateUserDTO dto) {
 
         var basicRole = roleRepository.findByRoleName(Role.Values.BASIC.name());
         var userFromDb = userRepository.findByEmail(dto.email());
@@ -47,20 +50,31 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        var UserModel = new UserModel();
-        UserModel.setEmail(dto.email());
-        UserModel.setPassword(passwordEncoder.encode((dto.password())));
-        UserModel.setRoles(of(basicRole));
+        var userModel = new UserModel();
+        userModel.setEmail(dto.email());
+        userModel.setPassword(passwordEncoder.encode((dto.password())));
+        userModel.setRoles(of(basicRole));
 
-        userRepository.save(UserModel);
+        userRepository.save(userModel);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        RegisterResponse response = new RegisterResponse(userModel.getName(),userModel.getUserId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
+
+
 
     @GetMapping("/users")
     public ResponseEntity<List<UserModel>> getAllUsers() {
         return  ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
+
+//    @GetMapping("/{groupId}/participants")
+//    public ResponseEntity<List<GroupModel>>getAllParticipantsGroup(@PathVariable long groupId) {
+//
+//    }
+    
+    
 
 }

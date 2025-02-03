@@ -1,4 +1,6 @@
 package com.github.fekom.secret_santa.dtos;
 
-public record LoginResposne(String accessToken, Long expiresIn) {
+import java.util.UUID;
+
+public record LoginResposne(String accessToken, Long expiresIn, UUID userId) {
 }

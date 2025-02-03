@@ -16,7 +16,10 @@ public class UserModel implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id",
+            columnDefinition = "uuid",
+            updatable = false,
+            nullable = false)
     private UUID userId;
 
     private String name;
