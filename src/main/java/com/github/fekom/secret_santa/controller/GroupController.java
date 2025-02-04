@@ -1,7 +1,7 @@
 package com.github.fekom.secret_santa.controller;
 
-import com.github.fekom.secret_santa.ApiResponse.AddParticipantsResponse;
-import com.github.fekom.secret_santa.ApiResponse.CreateGroupResponse;
+import com.github.fekom.secret_santa.apiResponse.AddParticipantsResponse;
+import com.github.fekom.secret_santa.apiResponse.CreateGroupResponse;
 import com.github.fekom.secret_santa.dtos.CreateGroupDTO;
 import com.github.fekom.secret_santa.dtos.ParticiapantDto;
 import com.github.fekom.secret_santa.model.GroupModel;
@@ -61,7 +61,7 @@ public class GroupController {
     }
 
     
-    @PostMapping("/{groupId}/participants")
+    @PostMapping("/api/group/{groupId}/add-participants")
     @PreAuthorize("hasAuthority('SCOPE_OWNER')")
     public ResponseEntity<AddParticipantsResponse> addParticipants(@PathVariable Long groupId, @RequestBody ParticiapantDto dto, JwtAuthenticationToken token) {
 

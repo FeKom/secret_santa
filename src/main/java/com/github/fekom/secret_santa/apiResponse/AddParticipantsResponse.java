@@ -1,4 +1,4 @@
-package com.github.fekom.secret_santa.ApiResponse;
+package com.github.fekom.secret_santa.apiResponse;
 
 import java.util.UUID;
 

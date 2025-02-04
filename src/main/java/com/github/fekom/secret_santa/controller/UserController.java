@@ -1,10 +1,11 @@
 package com.github.fekom.secret_santa.controller;
 
 
-import com.github.fekom.secret_santa.ApiResponse.RegisterResponse;
+import com.github.fekom.secret_santa.apiResponse.RegisterResponse;
 import com.github.fekom.secret_santa.dtos.CreateUserDTO;
 import com.github.fekom.secret_santa.model.Role;
 import com.github.fekom.secret_santa.model.UserModel;
+import com.github.fekom.secret_santa.repository.GroupRepository;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
 import com.github.fekom.secret_santa.service.UserService;
@@ -35,6 +36,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    GroupRepository groupRepository;
 
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
@@ -70,10 +74,19 @@ public class UserController {
         return  ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
-//    @GetMapping("/{groupId}/participants")
-//    public ResponseEntity<List<GroupModel>>getAllParticipantsGroup(@PathVariable long groupId) {
-//
-//    }
+
+
+   @GetMapping("/api/group/{groupId}/participants")
+   public ResponseEntity<List<UserModel>>getAllParticipantsByGroup(@PathVariable long groupId) {
+
+        var group = groupRepository.findById(groupId).orElseThrow(()-> new RuntimeException("Group NOT FOUND"));
+
+        List<UserModel> participants = group.getUser();
+
+    
+        return ResponseEntity.status(HttpStatus.OK).body(participants);
+
+   }
     
     
 
