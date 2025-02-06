@@ -1,4 +1,4 @@
-package com.github.fekom.secret_santa.model;
+package com.github.fekom.secret_santa.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "groups")
-public class GroupModel {
+public class GroupEntity {
 
     @Id
     @Column(name = "group_id")
@@ -22,7 +22,7 @@ public class GroupModel {
             inverseJoinColumns = @JoinColumn(name = "user_id")
 
     )
-    private List<UserModel> user;
+    private List<UserEntity> user;
 
     private String name;
 
@@ -58,9 +58,9 @@ public class GroupModel {
         this.preferences = preferences;
     }
 
-    public List<UserModel> getUser() {return user;}
+    public List<UserEntity> getUser() {return user;}
 
-    public void setUser(List<UserModel> user) {this.user = user;}
+    public void setUser(List<UserEntity> user) {this.user = user;}
 
     public String getName() {
         return name;

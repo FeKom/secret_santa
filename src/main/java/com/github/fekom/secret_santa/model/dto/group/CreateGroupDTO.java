@@ -1,4 +1,4 @@
-package com.github.fekom.secret_santa.dtos;
+package com.github.fekom.secret_santa.model.dto.group;
 
 import jakarta.validation.constraints.NotBlank;
 

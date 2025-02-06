@@ -1,8 +1,8 @@
 package com.github.fekom.secret_santa.infra.security;
 
-import com.github.fekom.secret_santa.dtos.LoginRequest;
-import com.github.fekom.secret_santa.dtos.LoginResposne;
-import com.github.fekom.secret_santa.model.Role;
+import com.github.fekom.secret_santa.model.dto.LoginRequest;
+import com.github.fekom.secret_santa.model.dto.LoginResposne;
+import com.github.fekom.secret_santa.entity.RoleEntity;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,7 @@ public class TokenController {
 
     @PostMapping("/api/login")
     public ResponseEntity<LoginResposne> login (@RequestBody LoginRequest loginRequest) {
+
         var user = userRepository.findByEmail(loginRequest.email());
 
         if(user.isEmpty() || !user.get().isLoginCorrect(loginRequest, passwordEncoder)) {
@@ -51,7 +52,7 @@ public class TokenController {
 
         var scopes = user.get().getRoles()
                 .stream()
-                .map(Role::getRoleName)
+                .map(RoleEntity::getRoleName)
                 .collect(Collectors.joining(""));
 
         var claims = JwtClaimsSet.builder()

@@ -1,7 +1,7 @@
-package com.github.fekom.secret_santa.model;
+package com.github.fekom.secret_santa.entity;
 
 
-import com.github.fekom.secret_santa.dtos.LoginRequest;
+import com.github.fekom.secret_santa.model.dto.LoginRequest;
 import jakarta.persistence.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-public class UserModel implements Serializable {
+public class UserEntity implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -29,7 +29,7 @@ public class UserModel implements Serializable {
     private String password;
 
     @ManyToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<GroupModel> groups;
+    private List<GroupEntity> groups;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
     @JoinTable(
@@ -37,7 +37,7 @@ public class UserModel implements Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private List<RoleEntity> roleEntities;
 
 
 
@@ -70,13 +70,13 @@ public class UserModel implements Serializable {
 
     public void setUserId(UUID userId) { this.userId = userId; }
 
-    public List<Role> getRoles() { return roles; }
+    public List<RoleEntity> getRoles() { return roleEntities; }
 
-    public void setRoles(List<Role> roles) { this.roles = roles; }
+    public void setRoles(List<RoleEntity> roleEntities) { this.roleEntities = roleEntities; }
 
-    public List<GroupModel> getGroups() { return groups; }
+    public List<GroupEntity> getGroups() { return groups; }
 
-    public void setGroups(List<GroupModel> groups) { this.groups = groups; }
+    public void setGroups(List<GroupEntity> groups) { this.groups = groups; }
 
     public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(loginRequest.password(), this.password);

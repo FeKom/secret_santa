@@ -1,10 +1,10 @@
-package com.github.fekom.secret_santa.model;
+package com.github.fekom.secret_santa.entity;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "roles")
-public class Role {
+public class RoleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,11 +1,11 @@
-package com.github.fekom.secret_santa.controller;
+package com.github.fekom.secret_santa.controller.group;
 
 import com.github.fekom.secret_santa.apiResponse.AddParticipantsResponse;
 import com.github.fekom.secret_santa.apiResponse.CreateGroupResponse;
-import com.github.fekom.secret_santa.dtos.CreateGroupDTO;
-import com.github.fekom.secret_santa.dtos.ParticiapantDto;
-import com.github.fekom.secret_santa.model.GroupModel;
-import com.github.fekom.secret_santa.model.Role;
+import com.github.fekom.secret_santa.model.dto.group.CreateGroupDTO;
+import com.github.fekom.secret_santa.model.dto.user.ParticiapantDto;
+import com.github.fekom.secret_santa.entity.GroupEntity;
+import com.github.fekom.secret_santa.entity.RoleEntity;
 import com.github.fekom.secret_santa.repository.GroupRepository;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -40,12 +38,12 @@ public class GroupController {
     @PostMapping("/api/group")
     public ResponseEntity<CreateGroupResponse> createGroup(@RequestBody CreateGroupDTO dto, JwtAuthenticationToken token) {
 
-        var basicRole = roleRepository.findByRoleName(Role.Values.OWNER.name());
+        var basicRole = roleRepository.findByRoleName(RoleEntity.Values.OWNER.name());
 
         var user = userRepository.findById(UUID.fromString(token.getName())).orElseThrow(() -> new RuntimeException("User not Found!"));
         user.setRoles(Collections.singletonList(basicRole));
 
-        var groupModel = new GroupModel();
+        var groupModel = new GroupEntity();
         groupModel.setUser(Collections.singletonList(user));
         groupModel.setName(dto.name());
         groupModel.setDescription(dto.Description());
