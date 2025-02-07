@@ -4,12 +4,8 @@ import com.github.fekom.secret_santa.apiResponse.AddParticipantsResponse;
 import com.github.fekom.secret_santa.apiResponse.CreateGroupResponse;
 import com.github.fekom.secret_santa.model.dto.group.CreateGroupDTO;
 import com.github.fekom.secret_santa.model.dto.user.ParticiapantDto;
-import com.github.fekom.secret_santa.entity.GroupEntity;
-import com.github.fekom.secret_santa.entity.RoleEntity;
-import com.github.fekom.secret_santa.repository.GroupRepository;
-import com.github.fekom.secret_santa.repository.RoleRepository;
-import com.github.fekom.secret_santa.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.fekom.secret_santa.service.GroupService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,42 +15,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.UUID;
-
 
 @RestController
 public class GroupController {
 
-    @Autowired
-    GroupRepository groupRepository;
+    private final GroupService groupService;
 
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    UserRepository userRepository;
+    public GroupController(GroupService groupService) {
+        this.groupService = groupService;
+    }
 
     @PostMapping("/api/group")
     public ResponseEntity<CreateGroupResponse> createGroup(@RequestBody CreateGroupDTO dto, JwtAuthenticationToken token) {
-
-        var basicRole = roleRepository.findByRoleName(RoleEntity.Values.OWNER.name());
-
-        var user = userRepository.findById(UUID.fromString(token.getName())).orElseThrow(() -> new RuntimeException("User not Found!"));
-        user.setRoles(Collections.singletonList(basicRole));
-
-        var groupModel = new GroupEntity();
-        groupModel.setUser(Collections.singletonList(user));
-        groupModel.setName(dto.name());
-        groupModel.setDescription(dto.Description());
-        groupModel.setPreferences(dto.preferences());
-    
-
-        groupRepository.save(groupModel);
-
-        CreateGroupResponse response = new CreateGroupResponse(groupModel.getGroupId(), "Group created successfully!");
-
-
+        var response =  groupService.createGroup(dto, token);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -62,21 +35,7 @@ public class GroupController {
     @PostMapping("/api/group/{groupId}/add-participants")
     @PreAuthorize("hasAuthority('SCOPE_OWNER')")
     public ResponseEntity<AddParticipantsResponse> addParticipants(@PathVariable Long groupId, @RequestBody ParticiapantDto dto, JwtAuthenticationToken token) {
-
-        var group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not Found"));
-
-        var participants = userRepository.findById(dto.userId()).orElseThrow(() -> new RuntimeException("User not found!"));
-
-        if (group.getUser().contains(participants)) {
-            throw new RuntimeException("Participant is already in this group!");
-            
-        }
-
-        group.getUser().add(participants);
-        groupRepository.save(group);
-
-        AddParticipantsResponse response = new AddParticipantsResponse(groupId, dto.userId(), "Participant added successfully!");
-
+        var response = groupService.addParticipants(groupId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
 

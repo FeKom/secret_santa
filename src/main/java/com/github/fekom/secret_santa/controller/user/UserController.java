@@ -12,6 +12,7 @@ import com.github.fekom.secret_santa.repository.UserRepository;
 import com.github.fekom.secret_santa.service.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,41 +31,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping()
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    GroupRepository groupRepository;
-
-    @Autowired
-    BCryptPasswordEncoder passwordEncoder;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/api/register")
     @Transactional
     public ResponseEntity<RegisterResponse> newUser(@Valid @RequestBody CreateUserDTO dto) {
 
-        var basicRole = roleRepository.findByRoleName(RoleEntity.Values.BASIC.name());
-        var userFromDb = userRepository.findByEmail(dto.email());
-
-        if(userFromDb.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-
-        var userModel = new UserEntity();
-        userModel.setEmail(dto.email());
-        userModel.setPassword(passwordEncoder.encode((dto.password())));
-        userModel.setRoles(of(basicRole));
-
-        userRepository.save(userModel);
-
-        RegisterResponse response = new RegisterResponse(userModel.getName(),userModel.getUserId());
-
+        var response = userService.newUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
@@ -80,18 +57,10 @@ public class UserController {
 
    @GetMapping("/api/group/{groupId}/participants")
    public ResponseEntity<List<GetAllParticipantsByGroupResponse>>getAllParticipantsByGroup(@PathVariable long groupId) {
-
-        var group = groupRepository.findById(groupId).orElseThrow(()-> new RuntimeException("Group NOT FOUND"));
-
-        List<UserEntity> participants = group.getUser();
-
-        List<GetAllParticipantsByGroupResponse> participantsDto = participants.stream()
-                .map(user -> new GetAllParticipantsByGroupResponse(group.getGroupId(), group.getName(), user.getUserId(), user.getName()))
-                .collect(Collectors.toList());
+        var participantsDto = userService.getAllParticipantsByGroup(groupId);
         return ResponseEntity.status(HttpStatus.OK).body(participantsDto);
 
    }
-    
-    
+
 
 }
