@@ -11,11 +11,13 @@ import com.github.fekom.secret_santa.repository.GroupRepository;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Collections;
 import java.util.UUID;
 
+@Service
 public class GroupService {
 
     private final RoleRepository roleRepository;

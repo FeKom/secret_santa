@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import static java.util.List.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @RestController
 @RequestMapping()
 public class UserController {
@@ -40,19 +39,10 @@ public class UserController {
     @PostMapping("/api/register")
     @Transactional
     public ResponseEntity<RegisterResponse> newUser(@Valid @RequestBody CreateUserDTO dto) {
-
         var response = userService.newUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
-
-
-
-    @GetMapping("/users")
-    public ResponseEntity<List<UserEntity>> getAllUsers() {
-        return  ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
-    }
-
 
 
    @GetMapping("/api/group/{groupId}/participants")
@@ -62,5 +52,9 @@ public class UserController {
 
    }
 
+   @GetMapping("/users")
+   public ResponseEntity<List<UserEntity>> getAllUsers() {
+       return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
+   }
 
 }
