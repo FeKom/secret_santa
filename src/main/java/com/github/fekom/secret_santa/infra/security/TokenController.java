@@ -2,11 +2,20 @@ package com.github.fekom.secret_santa.infra.security;
 
 import com.github.fekom.secret_santa.model.dto.LoginRequest;
 import com.github.fekom.secret_santa.model.dto.LoginResposne;
+import com.github.fekom.secret_santa.apiResponse.AddParticipantsResponse;
 import com.github.fekom.secret_santa.entity.RoleEntity;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -20,6 +29,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 @RestController
+@Tag(name = "Login", description = "Login Endpoint")
 public class TokenController {
 
     @Autowired
@@ -39,6 +49,18 @@ public class TokenController {
     }
 
     @PostMapping("/api/login")
+    @PreAuthorize("hasAuthority('SCOPE_OWNER')")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "successfully logged in",
+            content = {@Content(
+                schema = @Schema(implementation = LoginResposne.class),
+                mediaType = "application/json"
+            )} 
+        ),
+        @ApiResponse(responseCode = "404", description = "invalid email or password",
+            content = {@Content}
+        ),
+    })
     public ResponseEntity<LoginResposne> login (@RequestBody LoginRequest loginRequest) {
 
         var user = userRepository.findByEmail(loginRequest.email());
