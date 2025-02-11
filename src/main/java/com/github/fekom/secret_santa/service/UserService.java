@@ -49,6 +49,7 @@ public class UserService {
         }
 
         var userModel = new UserEntity();
+        userModel.setName(dto.name());
         userModel.setEmail(dto.email());
         userModel.setPassword(passwordEncoder.encode((dto.password())));
         userModel.setRoles(of(basicRole));

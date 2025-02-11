@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 
 public record CreateUserDTO(
 
-        @NotBlank @NotNull(message = "Nome é obrigatório! ") String nome,
+        @NotBlank @NotNull(message = "Nome é obrigatório! ") String name,
         @NotBlank @NotNull(message = "O email é obrigatorio! ")  @Email String email,
         @NotBlank @NotNull(message = "A senha é obrigatória! ")
         @Pattern(
