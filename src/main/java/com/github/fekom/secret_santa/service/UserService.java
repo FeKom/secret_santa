@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 import static java.util.List.of;
 
+import java.util.HashMap;
+
 @Service
 public class UserService {
 
@@ -65,13 +67,24 @@ public class UserService {
         var group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group NOT FOUND"));
         List<UserEntity> participants = group.getUser();
 
-        return participants.stream()
+        // var hashMapResponse = new HashMap<>();
+        // hashMapResponse.put("groupId", group.getGroupId())
+        // hashMapResponse.put("groupName", group.getName())
+      
+
+        var parseParticipants =  participants.stream()
                 .map(user -> new GetAllParticipantsByGroupResponse(
                         group.getGroupId(),
                         group.getName(),
                         user.getUserId(),
                         user.getName()))
                 .collect(Collectors.toList());
+
+        return parseParticipants;
+
+        // hashMapResponse.put("participants",parseParticipants)
+
+        // return hashMapResponse
     }
 
 
