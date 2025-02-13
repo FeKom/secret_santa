@@ -1,6 +1,7 @@
 package com.github.fekom.secret_santa.service;
 
 import com.github.fekom.secret_santa.apiResponse.GetAllParticipantsByGroupResponse;
+import com.github.fekom.secret_santa.apiResponse.ParticipantGroupDto;
 import com.github.fekom.secret_santa.apiResponse.RegisterResponse;
 import com.github.fekom.secret_santa.entity.RoleEntity;
 import com.github.fekom.secret_santa.entity.UserEntity;
@@ -12,16 +13,13 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
-
+import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.List.of;
-
-import java.util.HashMap;
 
 @Service
 public class UserService {
@@ -62,29 +60,29 @@ public class UserService {
 
     }
 
-    public List<GetAllParticipantsByGroupResponse> getAllParticipantsByGroup(Long groupId) {
+    public  ResponseEntity<GetAllParticipantsByGroupResponse> getAllParticipantsByGroup(Long groupId) {
 
         var group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group NOT FOUND"));
         List<UserEntity> participants = group.getUser();
 
-        // var hashMapResponse = new HashMap<>();
-        // hashMapResponse.put("groupId", group.getGroupId())
-        // hashMapResponse.put("groupName", group.getName())
+	if(participants.isEmpty()){
+		return ResponseEntity.noContent().build();
+	}
       
-
-        var parseParticipants =  participants.stream()
-                .map(user -> new GetAllParticipantsByGroupResponse(
-                        group.getGroupId(),
-                        group.getName(),
-                        user.getUserId(),
-                        user.getName()))
+        List<ParticipantGroupDto> parsedParticipants =  participants.stream()
+                .map(user -> new ParticipantGroupDto(
+                         user.getUserId().toString(),
+                         user.getName()))
                 .collect(Collectors.toList());
 
-        return parseParticipants;
 
-        // hashMapResponse.put("participants",parseParticipants)
 
-        // return hashMapResponse
+        GetAllParticipantsByGroupResponse response = new GetAllParticipantsByGroupResponse(
+		group.getGroupId(),
+		group.getName(),
+		parsedParticipants
+	);
+	return ResponseEntity.ok(response);
     }
 
 

@@ -1,10 +1,7 @@
 package com.github.fekom.secret_santa.apiResponse;
 
-import java.util.UUID;
-
-public record GetAllParticipantsByGroupResponse(Long groupId, String groupName,  UUID particiapantId, String userName) {
+public record GetAllParticipantsByGroupResponse(Long groupId, String groupName, java.util.List<ParticipantGroupDto> participants) {
 }
-
 
 
 // {
@@ -23,4 +20,4 @@ public record GetAllParticipantsByGroupResponse(Long groupId, String groupName, 
     
 // }
 
-    
+  

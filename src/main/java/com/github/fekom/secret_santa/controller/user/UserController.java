@@ -86,7 +86,7 @@ public class UserController {
     })
    public ResponseEntity<List<GetAllParticipantsByGroupResponse>>getAllParticipantsByGroup(@PathVariable long groupId) {
         var participantsDto = userService.getAllParticipantsByGroup(groupId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(participantsDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body((List<GetAllParticipantsByGroupResponse>) participantsDto);
 
    }
 
