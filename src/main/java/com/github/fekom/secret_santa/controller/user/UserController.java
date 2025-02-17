@@ -1,15 +1,10 @@
 package com.github.fekom.secret_santa.controller.user;
 
 
-import com.github.fekom.secret_santa.apiResponse.AddParticipantsResponse;
 import com.github.fekom.secret_santa.apiResponse.GetAllParticipantsByGroupResponse;
 import com.github.fekom.secret_santa.apiResponse.RegisterResponse;
 import com.github.fekom.secret_santa.model.dto.user.CreateUserDTO;
-import com.github.fekom.secret_santa.entity.RoleEntity;
 import com.github.fekom.secret_santa.entity.UserEntity;
-import com.github.fekom.secret_santa.repository.GroupRepository;
-import com.github.fekom.secret_santa.repository.RoleRepository;
-import com.github.fekom.secret_santa.repository.UserRepository;
 import com.github.fekom.secret_santa.service.UserService;
 
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,19 +14,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.List.*;
 
 @RestController
 @RequestMapping()
