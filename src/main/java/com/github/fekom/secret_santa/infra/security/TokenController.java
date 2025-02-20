@@ -20,7 +20,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
-import org.springframework.security.web.webauthn.api.PublicKeyCose;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,21 +33,22 @@ import java.util.stream.Collectors;
 @Tag(name = "Login", description = "Login Endpoint")
 public class TokenController {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+    private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
+    private final UserRepository userRepository;
+    private final  BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private  JwtEncoder jwtEncoder;
-
-    private JwtDecoder jwtDecoder;
-
-    @Autowired
-    private  UserRepository userRepository;
-
-    @Autowired
-    private  BCryptPasswordEncoder passwordEncoder;
-
-    public  TokenController() {
+    public  TokenController(RoleRepository roleRepository,
+                            JwtEncoder jwtEncoder,
+                            JwtDecoder jwtDecoder,
+                            UserRepository userRepository,
+                            BCryptPasswordEncoder passwordEncoder) {
+        this.roleRepository =roleRepository;
+        this.jwtEncoder = jwtEncoder;
+        this.jwtDecoder = jwtDecoder;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
 
     }
 
@@ -108,7 +108,7 @@ public class TokenController {
     }
 
 
-    @PostMapping("/api/token/refresh")
+    @PostMapping("/api/token/refresh-token")
     public ResponseEntity<LoginResponse> refreshAccessToken(@RequestBody TokenRefreshRequestDto request) {
 
         var refreshToken = request.refreshToken();

@@ -8,3 +8,11 @@
 
     - `mvn spring-boot:run` To run the Aplication
     
+
+# **Necessario**
+
+## - Terminar o Algoritimo de sorteio.
+
+## - Reset and Recover password.
+
+## - Testes e tratamento de Exceptions. F

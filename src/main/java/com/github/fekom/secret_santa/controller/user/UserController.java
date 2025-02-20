@@ -17,7 +17,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,7 +48,7 @@ public class UserController {
         ),
     })
     public ResponseEntity<RegisterResponse> newUser(@Valid @RequestBody CreateUserDTO dto) {
-        var response = userService.newUser(dto);
+        var response = userService.registerUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }

@@ -12,10 +12,16 @@ import com.github.fekom.secret_santa.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
+
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,19 +33,25 @@ public class UserService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final RoleRepository roleRepository;
+    private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
                        GroupRepository groupRepository,
                        RoleRepository roleRepository,
-                       BCryptPasswordEncoder passwordEncoder) {
+                       BCryptPasswordEncoder passwordEncoder,
+                       JwtEncoder jwtEncoder,
+                       JwtDecoder jwtDecoder) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtEncoder = jwtEncoder;
+        this.jwtDecoder = jwtDecoder;
     }
 
-    public RegisterResponse newUser(@Valid @RequestBody CreateUserDTO dto) {
+    public RegisterResponse registerUser(@Valid @RequestBody CreateUserDTO dto) {
 
         var basicRole = roleRepository.findByRoleName(RoleEntity.Values.BASIC.name());
         var userFromDb = userRepository.findByEmail(dto.email());
@@ -48,15 +60,45 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        var userModel = new UserEntity();
-        userModel.setName(dto.name());
-        userModel.setEmail(dto.email());
-        userModel.setPassword(passwordEncoder.encode((dto.password())));
-        userModel.setRoles(of(basicRole));
+        var userEntity = new UserEntity();
+        userEntity.setName(dto.name());
+        userEntity.setEmail(dto.email());
+        userEntity.setPassword(passwordEncoder.encode((dto.password())));
+        userEntity.setRoles(of(basicRole));
 
-        userRepository.save(userModel);
+        userRepository.save(userEntity);
 
-        return new  RegisterResponse(userModel.getName(),userModel.getUserId());
+        var now = Instant.now();
+        var accessTokenExpiresIn = 300L;
+        var refreshTokenExpiresIn = 604800L;
+
+        var scopes = userEntity.getRoles()
+                .stream()
+                .map(RoleEntity::getRoleName)
+                .collect(Collectors.joining(" "));
+
+        var accessTokenClaims = JwtClaimsSet.builder()
+                .issuer("secret-santa")
+                .subject(userEntity.getUserId().toString())
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(accessTokenExpiresIn))
+                .claim("scope", scopes)
+                .build();
+
+        var accessToken = jwtEncoder.encode(JwtEncoderParameters.from(accessTokenClaims)).getTokenValue();
+
+        var refreshTokenClaims = JwtClaimsSet.builder()
+                .issuer("secret-santa")
+                .subject(userEntity.getUserId().toString())
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(refreshTokenExpiresIn))
+                .build();
+
+        var refreshToken = jwtEncoder.encode(JwtEncoderParameters.from(refreshTokenClaims)).getTokenValue();
+
+
+
+        return new  RegisterResponse(userEntity.getName(),userEntity.getUserId(), accessToken, refreshToken);
 
     }
 
