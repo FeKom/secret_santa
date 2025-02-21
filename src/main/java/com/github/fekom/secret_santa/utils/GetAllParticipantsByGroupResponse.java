@@ -1,4 +1,4 @@
-package com.github.fekom.secret_santa.apiResponse;
+package com.github.fekom.secret_santa.utils;
 
 public record GetAllParticipantsByGroupResponse(Long groupId, String groupName, java.util.List<ParticipantGroupDto> participants) {
 }
@@ -21,3 +21,4 @@ public record GetAllParticipantsByGroupResponse(Long groupId, String groupName, 
 // }
 
   
+//

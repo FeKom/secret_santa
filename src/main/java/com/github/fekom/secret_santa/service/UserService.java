@@ -1,8 +1,8 @@
 package com.github.fekom.secret_santa.service;
 
-import com.github.fekom.secret_santa.apiResponse.GetAllParticipantsByGroupResponse;
-import com.github.fekom.secret_santa.apiResponse.ParticipantGroupDto;
-import com.github.fekom.secret_santa.apiResponse.RegisterResponse;
+import com.github.fekom.secret_santa.utils.GetAllParticipantsByGroupResponse;
+import com.github.fekom.secret_santa.utils.ParticipantGroupDto;
+import com.github.fekom.secret_santa.utils.RegisterResponse;
 import com.github.fekom.secret_santa.entity.RoleEntity;
 import com.github.fekom.secret_santa.entity.UserEntity;
 import com.github.fekom.secret_santa.model.dto.user.CreateUserDTO;
@@ -13,7 +13,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
@@ -34,21 +33,18 @@ public class UserService {
     private final GroupRepository groupRepository;
     private final RoleRepository roleRepository;
     private final JwtEncoder jwtEncoder;
-    private final JwtDecoder jwtDecoder;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
                        GroupRepository groupRepository,
                        RoleRepository roleRepository,
                        BCryptPasswordEncoder passwordEncoder,
-                       JwtEncoder jwtEncoder,
-                       JwtDecoder jwtDecoder) {
+                       JwtEncoder jwtEncoder) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtEncoder = jwtEncoder;
-        this.jwtDecoder = jwtDecoder;
     }
 
     public RegisterResponse registerUser(@Valid @RequestBody CreateUserDTO dto) {
@@ -123,7 +119,7 @@ public class UserService {
 		group.getGroupId(),
 		group.getName(),
 		parsedParticipants
-	);
+	    );
 	return ResponseEntity.ok(response);
     }
 

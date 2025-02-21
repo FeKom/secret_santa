@@ -1,9 +1,9 @@
 package com.github.fekom.secret_santa.controller.group;
 
-import com.github.fekom.secret_santa.apiResponse.AddParticipantsResponse;
-import com.github.fekom.secret_santa.apiResponse.CreateGroupResponse;
+import com.github.fekom.secret_santa.utils.AddParticipantsResponse;
+import com.github.fekom.secret_santa.utils.CreateGroupResponse;
 import com.github.fekom.secret_santa.model.dto.group.CreateGroupDTO;
-import com.github.fekom.secret_santa.model.dto.user.ParticiapantDto;
+import com.github.fekom.secret_santa.model.dto.user.ParticipantDto;
 import com.github.fekom.secret_santa.service.GroupService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,7 +77,7 @@ public class GroupController {
             content = {@Content}
         ),
     })
-    public ResponseEntity<AddParticipantsResponse> addParticipants(@PathVariable Long groupId, @RequestBody ParticiapantDto dto, JwtAuthenticationToken token) {
+    public ResponseEntity<AddParticipantsResponse> addParticipants(@PathVariable Long groupId, @RequestBody ParticipantDto dto, JwtAuthenticationToken token) {
         var response = groupService.addParticipants(groupId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
 

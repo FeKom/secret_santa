@@ -1,8 +1,9 @@
 package com.github.fekom.secret_santa.controller.user;
 
 
-import com.github.fekom.secret_santa.apiResponse.GetAllParticipantsByGroupResponse;
-import com.github.fekom.secret_santa.apiResponse.RegisterResponse;
+import com.github.fekom.secret_santa.model.dto.user.ForgotPasswordDto;
+import com.github.fekom.secret_santa.utils.GetAllParticipantsByGroupResponse;
+import com.github.fekom.secret_santa.utils.RegisterResponse;
 import com.github.fekom.secret_santa.model.dto.user.CreateUserDTO;
 import com.github.fekom.secret_santa.entity.UserEntity;
 import com.github.fekom.secret_santa.service.UserService;
@@ -76,6 +77,10 @@ public class UserController {
         var participantsDto = userService.getAllParticipantsByGroup(groupId);
         return ResponseEntity.status(HttpStatus.CREATED).body((List<GetAllParticipantsByGroupResponse>) participantsDto);
 
+   }
+
+   @PostMapping("/api/forgot-password")
+   public void forgotPassword(@RequestBody ForgotPasswordDto dto) {
    }
 
    @GetMapping("/users")

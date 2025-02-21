@@ -1,12 +1,12 @@
 package com.github.fekom.secret_santa.service;
 
 
-import com.github.fekom.secret_santa.apiResponse.AddParticipantsResponse;
-import com.github.fekom.secret_santa.apiResponse.CreateGroupResponse;
+import com.github.fekom.secret_santa.utils.AddParticipantsResponse;
+import com.github.fekom.secret_santa.utils.CreateGroupResponse;
 import com.github.fekom.secret_santa.entity.GroupEntity;
 import com.github.fekom.secret_santa.entity.RoleEntity;
 import com.github.fekom.secret_santa.model.dto.group.CreateGroupDTO;
-import com.github.fekom.secret_santa.model.dto.user.ParticiapantDto;
+import com.github.fekom.secret_santa.model.dto.user.ParticipantDto;
 import com.github.fekom.secret_santa.repository.GroupRepository;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
@@ -52,7 +52,7 @@ public class GroupService {
          return new CreateGroupResponse(groupModel.getGroupId(), "Group created successfully!");
     }
 
-    public AddParticipantsResponse addParticipants(@PathVariable Long groupId, ParticiapantDto dto) {
+    public AddParticipantsResponse addParticipants(@PathVariable Long groupId, ParticipantDto dto) {
 
         var group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not Found"));
 
