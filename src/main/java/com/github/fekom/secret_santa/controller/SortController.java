@@ -6,13 +6,24 @@ import com.github.fekom.secret_santa.repository.GroupRepository;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
 import com.github.fekom.secret_santa.utils.SortResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+@RestController
+@RequestMapping()
+@Tag(name = "Sort", description = "Endpoints for Draw")
 public class SortController {
      @Autowired
      private UserRepository userRepository;
@@ -22,6 +33,29 @@ public class SortController {
      private RoleRepository roleRepository;
 
       @GetMapping("/api/group/{groupId}/sort")
+      @Operation(
+              summary = "Sort Participants of a Group",
+              description = "Sort the participants of a group in a random order and return the result"
+      )
+      @ApiResponses(value = {
+              @ApiResponse(responseCode = "200", description = "Sorted Participants",
+                      content = {@Content(
+                              schema = @Schema(implementation = SortResponse.class),
+                              mediaType = "application/json"
+                      )}
+              ),
+              @ApiResponse(responseCode = "400", description = "Bad Request - Group has fewer than 2 participants!",
+                      content = {@Content}
+              ),
+              @ApiResponse(responseCode = "404", description = "Group Not Found!",
+                      content = {@Content(
+                              schema = @Schema(defaultValue = "Group with the provided ID does not exist")
+                      )}
+              ),
+              @ApiResponse(responseCode = "500", description = "Internal Server Error!",
+                      content = {@Content}
+              )
+      })
       public ResponseEntity<SortResponse> SortParticipants(@PathVariable long groupId) {
 
           var group = groupRepository.findById(groupId)
@@ -39,8 +73,9 @@ public class SortController {
           HashMap<String, String> draw = new HashMap<>();
           for (int i = 0; i < participantsShuffled.size(); i++) {
               draw.put(participants.get(i).getName(), participantsShuffled.get(i).getName());
-              System.out.println(draw);
           }
+          System.out.println(draw);
+
 
           SortResponse response = new SortResponse(draw);
 

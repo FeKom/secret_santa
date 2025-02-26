@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "groups")
@@ -23,6 +24,9 @@ public class GroupEntity {
 
     )
     private List<UserEntity> user;
+
+    @OneToMany(mappedBy = "groups")
+    private Set<DrawEntity> draws;
 
     private String name;
 
@@ -56,6 +60,14 @@ public class GroupEntity {
 
     public void setPreferences(String preferences) {
         this.preferences = preferences;
+    }
+
+    public Set<DrawEntity> getDraws() {
+        return draws;
+    }
+
+    public void setDraws(Set<DrawEntity> draws) {
+        this.draws = draws;
     }
 
     public List<UserEntity> getUser() {return user;}

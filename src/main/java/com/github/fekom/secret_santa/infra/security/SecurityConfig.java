@@ -69,7 +69,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/login" ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/register" ).permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui/index.html").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
@@ -81,7 +81,7 @@ public class SecurityConfig {
     public JwtEncoder encoder()throws Exception{
         RSAKey rsaKey = new RSAKey.Builder(getPublicKey()).privateKey(getPrivateKey()).build();
         JWKSet jwkSet = new JWKSet(rsaKey);
-        return new NimbusJwtEncoder(new ImmutableJWKSet<>(jwkSet) );
+        return new NimbusJwtEncoder(new ImmutableJWKSet<>(jwkSet));
     }
 
     @Bean
