@@ -8,8 +8,6 @@ import jakarta.persistence.*;
 @Table(name = "draws")
 public class DrawEntity {
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "draw_id",
@@ -21,7 +19,7 @@ public class DrawEntity {
     @JoinColumn(name = "group_id",
             nullable = false
     )
-    private GroupEntity group;
+    private GroupEntity groups;
 
     @ManyToOne
     @JoinColumn(name = "drawer_id")
@@ -56,11 +54,11 @@ public class DrawEntity {
     }
 
     public GroupEntity getGroup() {
-        return group;
+        return groups;
     }
 
     public void setGroup(GroupEntity group) {
-        this.group = group;
+        this.groups = group;
     }
 
 

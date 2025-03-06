@@ -1,6 +1,9 @@
 package com.github.fekom.secret_santa.entity;
 
 import jakarta.persistence.*;
+import org.apache.catalina.User;
+
+import java.util.List;
 
 @Entity
 @Table(name = "roles")
@@ -13,6 +16,9 @@ public class RoleEntity {
 
     @Column(name = "role_name")
     private String roleName;
+
+    @ManyToMany(mappedBy = "role")
+    private List<UserEntity> user;
 
     public String getRoleName() {
         return roleName;

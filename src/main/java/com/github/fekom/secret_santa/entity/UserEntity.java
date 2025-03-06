@@ -37,7 +37,7 @@ public class UserEntity implements Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<RoleEntity> roleEntities;
+    private List<RoleEntity> role;
 
 
 
@@ -70,9 +70,9 @@ public class UserEntity implements Serializable {
 
     public void setUserId(UUID userId) { this.userId = userId; }
 
-    public List<RoleEntity> getRoles() { return roleEntities; }
+    public List<RoleEntity> getRoles() { return role; }
 
-    public void setRoles(List<RoleEntity> roleEntities) { this.roleEntities = roleEntities; }
+    public void setRoles(List<RoleEntity> roleEntities) { this.role = roleEntities; }
 
     public List<GroupEntity> getGroups() { return groups; }
 

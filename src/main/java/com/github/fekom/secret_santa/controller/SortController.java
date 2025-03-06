@@ -1,11 +1,13 @@
 package com.github.fekom.secret_santa.controller;
 
 
+import com.github.fekom.secret_santa.entity.DrawEntity;
 import com.github.fekom.secret_santa.entity.UserEntity;
+import com.github.fekom.secret_santa.model.dto.draw.*;
+import com.github.fekom.secret_santa.repository.DrawRepository;
 import com.github.fekom.secret_santa.repository.GroupRepository;
 import com.github.fekom.secret_santa.repository.RoleRepository;
 import com.github.fekom.secret_santa.repository.UserRepository;
-import com.github.fekom.secret_santa.utils.SortResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +27,8 @@ import java.util.*;
 @RequestMapping()
 @Tag(name = "Sort", description = "Endpoints for Draw")
 public class SortController {
+     @Autowired
+     private DrawRepository drawRepository;
      @Autowired
      private UserRepository userRepository;
      @Autowired
@@ -70,16 +74,37 @@ public class SortController {
           ArrayList<UserEntity> participantsShuffled = new ArrayList<>(participants);
           Collections.shuffle(participantsShuffled);
 
-          HashMap<String, String> draw = new HashMap<>();
+          List<ParticipantsDrawResponse> participantsResponse = new ArrayList<>();
+
+          var drawId = 0;
           for (int i = 0; i < participantsShuffled.size(); i++) {
-              draw.put(participants.get(i).getName(), participantsShuffled.get(i).getName());
+              UserEntity drawer = participants.get(i);
+              UserEntity drawn = participantsShuffled.get(i);
+
+              participantsResponse.add(new ParticipantsDrawResponse(
+                      new UserDrawResponse(drawer.getUserId(), drawer.getName()),
+                      new UserDrawResponse(drawn.getUserId(), drawn.getName())
+              ));
+
+              DrawEntity draw = new DrawEntity();
+              draw.setDrawer(drawer);
+              draw.setDrawn(drawn);
+              draw.setGroup(group);
+
+              draw = drawRepository.save(draw);
           }
-          System.out.println(draw);
 
+          GroupDrawResponse groupDrawResponse = new GroupDrawResponse(
+                  groupId,
+                  group.getName(),
+                  participantsResponse
+          );
 
-          SortResponse response = new SortResponse(draw);
+          DrawResponse drawResponse = new DrawResponse((long) drawId, groupDrawResponse);
 
-          return ResponseEntity.ok(response);
+          SortResponse sortResponse = new SortResponse(drawResponse);
+
+          return ResponseEntity.ok(sortResponse);
       }
 
 //    public static void lista() {
